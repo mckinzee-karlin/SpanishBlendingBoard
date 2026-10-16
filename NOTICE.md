@@ -13,8 +13,10 @@
 - Isolated letter sounds and some syllable and word clips: Sounds of Speech, University of Iowa, and device text-to-speech.
 - ACTION NEEDED before making the repository public: confirm the University of Iowa terms allow redistribution of the clips.
 
+- Tablero de mezcla: the sounds for o, u and ñ come from Sounds of Speech, University of Iowa (soundsofspeech.uiowa.edu). The other letter sounds in the Tablero are in `tablero-de-mezcla.html`; their source needs to be confirmed by the project owner before the repository is made public.
+
 ## Fonts
-- Andika (SIL Open Font License) and Roboto Slab (Apache 2.0), loaded from Google Fonts.
+- Andika (SIL Open Font License; used by both apps) and Roboto Slab (Apache 2.0), loaded from Google Fonts.
 
 ## Items that need a specialist before classroom use
 - Speech-language pathologist or AAC specialist: isolated speech sounds for students with apraxia of speech, dysarthria or no functional speech.

@@ -1,0 +1,61 @@
+<title>Letras y mezcla</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+:root{--bg:#FBF8F1;--fg:#1F2A44;--line:#6F6A58;--accent:#7D0B36;--accent-fg:#FFFFFF;--panel:#FFFFFF;--focus:#0057D9;color-scheme:light}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#141A2C;--fg:#F3EFE4;--line:#8F9AB8;--accent:#FF8FB5;--accent-fg:#141A2C;--panel:#1E2740;--focus:#7DB2FF;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#141A2C;--fg:#F3EFE4;--line:#8F9AB8;--accent:#FF8FB5;--accent-fg:#141A2C;--panel:#1E2740;--focus:#7DB2FF;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;background:var(--bbg,var(--bg));color:var(--bfg,var(--fg));font-family:'Andika',Verdana,sans-serif;display:flex;flex-direction:column;height:100dvh}
+.bar{flex:none;display:flex;align-items:center;gap:10px;min-height:48px;padding:2px max(12px,env(safe-area-inset-right,0px)) 2px max(12px,env(safe-area-inset-left,0px));border-bottom:3px solid var(--line)}
+.bar label{font-size:1rem;font-weight:700}
+.bar select{font:inherit;font-size:1.0625rem;font-weight:700;min-height:44px;max-width:100%;min-width:0;padding:4px 12px;border:3px solid var(--fg);border-radius:12px;background:var(--panel);color:var(--fg)}
+.bar select:focus-visible{outline:4px solid var(--focus);outline-offset:2px}
+.stage{flex:1 1 auto;min-height:0;position:relative}
+.stage iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:transparent}
+.stage iframe[hidden]{display:none}
+.fb{margin:0;padding:10px 16px;font-size:1.0625rem}.fb[hidden]{display:none}.fb a{color:var(--fg);font-weight:700}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media (max-width:420px){.bar label span.long{display:none}}
+</style>
+<div class="bar">
+  <label for="ruta">Ruta del estudiante</label>
+  <select id="ruta" lang="es">
+    <option value="emergente">Emergente: Letra del día</option>
+    <option value="transicional">Transicional: Tablero de mezcla</option>
+  </select>
+</div>
+<div class="stage" id="stage"></div>
+<p class="fb" id="fb" hidden>No se pudo abrir esta ruta dentro de la página. Ábrela por separado: <a href="https://claude.ai/artifact/11Ha2wi5tLTc1oYU48wN59" target="_blank" rel="noopener">Letra del día</a> o <a href="https://claude.ai/artifact/GCqobSvdQ9FQjiYszcuy83" target="_blank" rel="noopener">Tablero de mezcla</a>.</p>
+<div class="vh" id="live" role="status" aria-live="polite"></div>
+<script>
+"use strict";
+document.documentElement.lang="es-MX";
+var APPS={emergente:__A__,transicional:__B__};
+var TITLES={emergente:"Letra del día",transicional:"Tablero de mezcla"};
+var sel=document.getElementById("ruta"),stage=document.getElementById("stage"),live=document.getElementById("live");
+var frames={},cur=null;
+function store(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v)}catch(e){return null}}
+function stopSound(f){try{var w=f.contentWindow;if(w.speechSynthesis)w.speechSynthesis.cancel();if(typeof w.stopAudio==="function")w.stopAudio()}catch(e){}}
+function syncBar(){try{var f=frames[cur];if(!f||f.hidden)return;var d=f.contentDocument;if(!d||!d.body)return;var cs=d.defaultView.getComputedStyle(d.body),bg=cs.backgroundColor,fg=cs.color;if(bg&&bg!=="rgba(0, 0, 0, 0)"){document.body.style.setProperty("--bbg",bg);document.body.style.setProperty("--bfg",fg)}}catch(e){}}
+function show(k,announce){
+  if(!APPS[k])k="emergente";
+  if(cur&&frames[cur])stopSound(frames[cur]);
+  cur=k;
+  Object.keys(APPS).forEach(function(n){if(frames[n])frames[n].hidden=(n!==k)});
+  if(!frames[k]){
+    var f=document.createElement("iframe");
+    f.title=TITLES[k];f.srcdoc=APPS[k];f.addEventListener("load",syncBar);
+    stage.appendChild(f);frames[k]=f;
+  }
+  sel.value=k;store("ly-ruta",k);
+  if(announce)live.textContent="Mostrando "+TITLES[k];
+  setTimeout(syncBar,60);
+}
+sel.addEventListener("change",function(){show(sel.value,true)});
+setInterval(syncBar,700);
+setTimeout(function(){try{var f=frames[cur];if(!f)return;var w=f.contentWindow,d=f.contentDocument;if(!w||(d&&(!d.body||!d.body.children.length)))document.getElementById("fb").hidden=false}catch(e){}},4000);
+var h=(location.hash||"").replace("#","");
+show(APPS[h]?h:(APPS[store("ly-ruta")]?store("ly-ruta"):"emergente"),false);
+</script>
