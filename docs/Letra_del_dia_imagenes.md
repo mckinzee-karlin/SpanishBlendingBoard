@@ -1,0 +1,159 @@
+# Letra del día: imágenes por jalar de Canva
+
+## Oraciones (30, una por letra, escena completa)
+
+- a: La araña anda en la rama.
+- b: Beto besa a su bebé.
+- c: Cuca come coco.
+- ch: Chucho toma leche.
+- d: Dina da un dulce.
+- e: El elefante es enorme.
+- f: La foca Fifi usa una foto.
+- g: El gato Gabo guarda la goma.
+- h: Hilda come helado.
+- i: La iguana está en la isla.
+- j: La jirafa Jacinta salta.
+- k: Karen hace karate.
+- l: El loro Lalo ve la luna.
+- ll: La lluvia llega a la calle.
+- m: El mono mira la mesa.
+- n: El nene Nico ve una nube.
+- ñ: La niña Toña ve una piñata.
+- o: Olga ve un oso.
+- p: Pepe pinta un pato.
+- qu: Quique quiere queso.
+- r: Rita ve una rana.
+- rr: El perro corre al carro.
+- s: Sofía saca su silla al sol.
+- t: Teo tiene un taco.
+- u: Úrsula come uvas.
+- v: Vera ve una vaca.
+- w: Wanda come un wafle.
+- x: El taxi lleva un xilófono.
+- y: Yola usa un yoyo.
+- z: El zorro usa un zapato.
+
+## Palabras de las sílabas (120 imágenes, una por palabra)
+
+Palabra: sílabas donde se usa
+
+- azúcar: zu
+- ballena: lle, ba, na
+- barriga: rri
+- bañera: ñe
+- billete: bi, lle, te
+- botella: lla, bo
+- buho: ho, bu
+- caballo: llo, ba, ca
+- cabeza: be, za, ca
+- cachorro: cho, rro
+- cadena: de
+- café: fe
+- cajeta: je, ta
+- camello: llo, me
+- camisa: mi, sa
+- carreta: rre
+- carrito: rri, to
+- carrusel: rru
+- cebolla: ce, lla, bo
+- cereza: ce, re, za
+- chamarra: rra, ma
+- chile: chi, le
+- chivo: vo
+- chorizo: cho, zo, ri
+- chuleta: chu, le, ta
+- chupete: chu, pe, te
+- cine: ci, ne
+- ciruela: ru
+- coche: che
+- cocina: ci, co, na
+- comida: da, mi, co
+- cuchara: cu, cha, ra
+- cuna: cu
+- dedo: de
+- dibujo: di, jo, bu
+- dinosaurio: di
+- ducha: du, cha
+- durazno: du
+- faro: fa, ro
+- figura: gu, fi
+- foca: fo
+- foto: fo
+- gallina: lli, ga
+- gelatina: ge
+- gemelo: ge, me, lo
+- gigante: gi
+- girasol: gi
+- gorila: go, ri, la
+- gusano: gu, sa, no
+- hamaca: ha, ma
+- harina: ha
+- helado: he, do, la
+- herradura: he
+- hija: hi, ja
+- hilo: hi
+- hoja: ho, ja
+- huevo: vo
+- humo: hu
+- huracán: hu
+- jarra: rra
+- jefe: fe, je
+- jirafa: ji, fa, ra
+- jitomate: ji
+- joya: ya, jo
+- jugo: ju, go
+- juguete: ju
+- karate: ka
+- kimono: ki, mo, no
+- kiwi: wi, ki
+- koala: ko
+- lima: li
+- lluvia: llu
+- luna: lu
+- mañana: ña
+- mochila: chi, mo
+- moneda: da, ne
+- mosquito: qui
+- muñeca: ñe, mu
+- música: mu, si
+- nevera: ve
+- niña: ni, ña
+- niño: ni, ño
+- nube: nu, be
+- número: nu, ro
+- patito: ti, pa, to
+- payaso: ya, so, pa
+- peluche: lu, che, pe
+- pequeño: que, ño
+- pirata: pi
+- piña: pi
+- pollo: po
+- puma: pu
+- pupusa: pu
+- raqueta: que
+- regalo: re, ga, lo
+- rubí: ru, bi
+- sapo: po
+- semaforo: se
+- semana: se
+- sirena: si
+- sucio: su
+- suma: su
+- taxi: xi
+- tortilla: ti
+- tuba: tu
+- tulipán: tu, li
+- vaca: va
+- vaso: va, so
+- venado: ve, do
+- vibora: vi
+- vidrio: vi
+- wifi: wi, fi
+- xilófono: xi
+- yema: ye
+- yeso: ye
+- yogur: yo
+- yoyo: yo
+- yuca: yu
+- zebra: ze
+- zorro: zo, rro

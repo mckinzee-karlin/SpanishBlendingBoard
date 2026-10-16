@@ -1,19 +1,23 @@
-# Tablero de mezcla / Blending board
+# Letra del día
 
-A blending board for early reading practice. The student touches or drags letters to build a word, then the device says the word. No speech is required from the student.
+A Spanish "letter of the day" routine for Kindergarten students who are learning letters, built as one web page (`index.html`). It follows an explicit alphabet-knowledge routine: name the letter, say its sound, find it in a sentence, practice its syllables, and write it. Students can respond without speaking (pointing, looking, AAC, keyboard or letter board).
 
-- Languages: Spanish (27 letters, with letter sounds) and English (26 letters, no letter sounds). Change the language in Ajustes / Settings.
-- Modes: Free (any number of letters) and With boxes (the teacher sets the number of letters, 1 to 12).
-- Letter size: four sizes.
-- Whole words are spoken with the device's own synthesized voice, so the sound depends on the voices installed on the device.
+Language of the app: Spanish (es-MX). Teacher documents are in `docs/` in Spanish and English.
 
-The whole board is one file, `index.html`. It needs no installation.
+## Open the app
+Open `index.html` in a browser. No server is needed. If GitHub Pages is turned on for this repository, the page is served from the repository's Pages address.
 
-## Credits
+## What is in this repository
+- `index.html`: the finished app (one file, about 10 MB, includes the pictures and sound clips).
+- `source/`: files used to build `index.html`.
+  - `template.html`: the app's page, styles and code.
+  - `data/`: letters, sentences, syllable words, stroke guides, pictures and sound clips (JSON).
+  - `build.py`: builds `../index.html`. Run `python3 build.py` inside `source/`.
+  - `doc.py`, `doc_en.py`, `deck.py`: build the teacher script (Spanish and English) and the blank sentence-picture deck into `docs/`. They need `python-docx` and `python-pptx`.
+- `docs/`: teacher script (Spanish and English), list of pictures for Canva, and the blank sentence deck.
 
-- The sounds of the letters o, u and ñ are from Sounds of Speech, University of Iowa (https://soundsofspeech.uiowa.edu/spanish). The recordings belong to the University of Iowa. Check its terms of use before sharing this board publicly.
-- The other Spanish letter sounds come from the earlier Herramientas de mezcla tool in this project.
+## Accessibility
+Checked with scripted tests (axe-core 4.10.2 on 24 states in three themes: no A/AA violations, no 7:1 contrast failures; no horizontal scroll from 320 to 640 px wide; 44 px targets). It has not been tested with screen readers or with students. See `NOTICE.md` for what still needs a specialist.
 
-## Status
-
-Not yet tested with a screen reader, switch access, a real tablet or phone speaker, or students. A speech-language pathologist should review the letter sounds before classroom use.
+## License and credits
+See `LICENSE.md` and `NOTICE.md`. Short version: Bluebonnet Learning material (Texas Education Agency) is licensed CC BY-NC-SA 4.0, so this adaptation is non-commercial and share-alike. Some pictures and sounds have separate terms listed in `NOTICE.md`.

@@ -1,0 +1,532 @@
+<title>Letra del día</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Roboto+Slab:wght@600;700&display=swap">
+<style>
+:root{
+  --bg:#FFFBFC; --panel:#FFFFFF; --pale:#FDE4EC; --fg:#232C64; --muted:#3A4068; --line:#7A80A8;
+  --accent:#B4134F; --accent-fg:#FFFFFF; --sep:#7D0B36; --sep-fg:#FFFFFF; --vowel:#FFF1C9; --cons:#E4E8FA; --ok:#0B6B3A; --focus:#0057D9; --ghost:#EEF0FA;
+  --mh:clamp(56px,8vh,96px);
+  --sans:'Andika',Verdana,sans-serif; --slab:'Roboto Slab',Georgia,serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]):not([data-theme="hc"]){
+    --bg:#11142B; --panel:#1B2040; --pale:#3A1A2E; --fg:#F3F4FF; --muted:#BFC4E8; --line:#8A90C0;
+    --accent:#FF8FB5; --accent-fg:#11142B; --sep:#B3125A; --sep-fg:#FFFFFF; --vowel:#4A3F12; --cons:#27305E; --ok:#7BE0A6; --focus:#7DB2FF; --ghost:#232A55; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#11142B; --panel:#1B2040; --pale:#3A1A2E; --fg:#F3F4FF; --muted:#BFC4E8; --line:#8A90C0;
+  --accent:#FF8FB5; --accent-fg:#11142B; --sep:#B3125A; --sep-fg:#FFFFFF; --vowel:#4A3F12; --cons:#27305E; --ok:#7BE0A6; --focus:#7DB2FF; --ghost:#232A55; color-scheme:dark;
+}
+:root[data-theme="light"]{color-scheme:light}
+:root[data-theme="hc"]{
+  --bg:#000; --panel:#000; --pale:#1A1A1A; --fg:#FFF; --muted:#FFF; --line:#FFF;
+  --accent:#FFE600; --accent-fg:#000; --sep:#FFE600; --sep-fg:#000; --vowel:#000; --cons:#000; --ok:#00FF7F; --focus:#00E5FF; --ghost:#1A1A1A; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:1.25rem;line-height:1.35;margin:0;
+  padding-block:8px 12px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--slab);margin:0;text-wrap:balance}
+button,select,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:5px solid var(--focus);outline-offset:3px}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.app{max-width:1240px;margin:0 auto;display:flex;flex-direction:column;gap:10px}
+.btn{min-height:52px;padding:6px 18px;border-radius:16px;border:3px solid var(--fg);background:var(--panel);font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn.primary{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.icon{width:30px;height:30px;flex:none}
+/* top bar */
+.bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.bar .sp{flex:1}
+.bar select{min-height:52px;min-width:150px;padding:4px 14px;border-radius:16px;border:3px solid var(--fg);background:var(--panel);font-weight:700;font-size:1.5rem}
+.bar .btn.sq{min-width:52px;padding:0 10px}
+/* cards row */
+.cards{display:grid;grid-template-columns:1fr 1fr auto 1.15fr;gap:10px;align-items:stretch}
+.card{position:relative;border:5px solid var(--fg);border-radius:24px;background:var(--cons);display:flex;align-items:center;justify-content:center;min-height:clamp(100px,19vh,200px);font-size:clamp(64px,14vh,150px);font-weight:700;line-height:1;padding:0 10px}
+.card.v{background:var(--vowel)}
+.card small{position:absolute;left:16px;bottom:8px;font-size:1rem;font-weight:400;color:var(--muted)}
+.card.point{outline:8px solid var(--focus);outline-offset:4px}
+.spk{border:5px solid var(--fg);border-radius:24px;background:var(--panel);min-width:112px;display:flex;align-items:center;justify-content:center}
+.spk svg{width:56px;height:56px}
+.pic{border:5px solid var(--fg);border-radius:24px;background:var(--panel);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:8px;min-width:0;text-align:center;overflow:hidden}
+.pic .ph{position:relative;flex:1;width:100%;min-height:0;display:flex;align-items:center;justify-content:center;background:var(--ghost);border-radius:14px}
+.pic .ph svg{width:clamp(48px,9vh,88px);height:clamp(48px,9vh,88px);color:var(--muted)}
+.pic img{position:absolute;inset:6px;width:calc(100% - 12px);height:calc(100% - 12px);object-fit:contain}
+.pic .w{font-size:clamp(1.5rem,3.4vh,2.25rem);font-weight:700}
+/* routine table */
+.routine{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.col{display:flex;flex-direction:column;gap:8px;min-width:0}
+.colhead{font-family:var(--slab);font-size:1.375rem;font-weight:700;background:var(--sep);color:var(--sep-fg);border:3px solid var(--sep);border-radius:16px;min-height:64px;padding:6px 10px}
+.mark{min-height:var(--mh);width:100%;border:4px solid var(--line);border-radius:18px;background:var(--panel);display:flex;align-items:center;justify-content:center;padding:0}
+.mark svg{width:56px;height:56px;color:var(--ok);display:none}
+.mark[aria-pressed="true"],.mark.on{border-color:var(--ok);background:var(--pale)}
+.mark[aria-pressed="true"] svg,.mark.on svg{display:block}
+.mark.auto{flex:1;min-height:calc(var(--mh)*3 + 16px);cursor:default}
+.mark.auto svg{width:96px;height:96px}
+.pfoot .mark.auto{min-height:var(--mh);width:100%}
+.pfoot .marks.one{grid-template-columns:1fr}
+#dStep.fit .pfoot .mark{min-height:clamp(48px,8vh,96px)}
+#dSyl{height:calc(100dvh - 24px)}
+#dSyl .pbody{overflow:auto}
+#dSyl .sylnote{font-size:1.25rem;font-weight:400;margin-left:12px}
+.pfoot .mark.auto svg{width:56px;height:56px}
+/* syllables */
+.syls{display:flex;gap:10px;align-items:stretch;flex-wrap:wrap}
+.syls[hidden]{display:none}
+.syl{flex:1 1 90px;min-height:76px;border:4px solid var(--fg);border-radius:18px;background:var(--panel);font-size:2.5rem;font-weight:700;line-height:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px 8px}
+.syl small{font-size:.9rem;font-weight:400;color:var(--muted)}
+.syl.on{background:var(--cons);outline:5px solid var(--focus);outline-offset:2px}
+/* dialogs */
+dialog[open]{display:flex;flex-direction:column}
+dialog{border:4px solid var(--fg);border-radius:26px;background:var(--bg);color:var(--fg);padding:0;width:min(1240px,calc(100vw - 24px));max-height:calc(100dvh - 24px);overflow:auto}
+dialog::backdrop{background:rgba(20,24,60,.55)}
+.phead{flex:none;display:flex;gap:10px;align-items:center;justify-content:space-between;padding:12px 16px 0}
+.stepname{font-size:1.75rem;background:var(--sep);color:var(--sep-fg);border-radius:16px;padding:8px 22px;min-height:64px;display:flex;align-items:center}
+.pbody{padding:12px 16px;display:flex;flex-direction:column;gap:10px;flex:1 1 auto;min-height:0}
+.pfoot{flex:none;position:sticky;bottom:0;background:var(--bg);padding:8px 16px 16px;border-top:3px solid var(--line);display:flex;flex-direction:column;gap:10px}
+.pfoot .marks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.navrow{display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap}
+.cardsP{display:grid;grid-template-columns:1fr 1fr auto 1.15fr;gap:10px;align-items:stretch}
+.cardsP .card{min-height:clamp(110px,22vh,200px);font-size:clamp(64px,15vh,150px)}
+.cardsP.sm .card{min-height:clamp(84px,14vh,120px);font-size:clamp(52px,9vh,84px)}
+.cardsP.sm .card small{display:none}
+.cardsP.sm .spk{min-width:84px}
+.cardsP.sm .pic .ph{display:none}
+.cardsP.sm .pic{flex-direction:row;justify-content:center}
+.cardsP.f3{grid-template-columns:1fr 1fr auto}
+.fnd{display:grid;grid-template-columns:minmax(120px,clamp(130px,24vh,230px)) 1fr;gap:12px;align-items:center;flex:1 1 auto}
+.fnd.nopic{grid-template-columns:1fr}
+.spic{border:4px solid var(--fg);border-radius:20px;background:var(--panel);aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;padding:6px;overflow:hidden}
+.spic svg{width:56%;height:56%;color:var(--muted)}
+.spic img{max-width:100%;max-height:100%;object-fit:contain}
+.tw.rd{background:var(--vowel);border-color:var(--fg)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+/* find it */
+.fb{display:flex;gap:10px;align-items:center;font-size:1.5rem;font-weight:700;min-height:44px}
+.fb.ok{color:var(--ok)}
+.txt{font-size:clamp(1.9rem,5.4vh,3.25rem);line-height:1.8;display:flex;flex-wrap:wrap;gap:4px 14px;margin:6px 0}
+.tw{border:3px solid transparent;border-radius:12px;background:var(--panel);color:var(--fg);font:inherit;padding:0 8px;min-height:60px}
+.tw:hover{border-color:var(--line)}
+.ch{padding:0 1px;border-radius:6px}
+.ch.hl{background:var(--accent);color:var(--accent-fg);font-weight:700;text-decoration:underline;text-underline-offset:6px}
+.ta{width:100%;font:inherit;border:3px solid var(--fg);border-radius:12px;padding:10px;background:var(--panel);color:var(--fg)}
+/* write it */
+.hw{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:10px;flex:1 1 auto;min-height:0}
+#dStep.fit{height:calc(100dvh - 24px)}
+#dStep.fit .pbody{overflow:hidden}
+#dStep.fit .cardsP.sm .card{min-height:0;height:clamp(56px,10vh,96px);font-size:clamp(38px,7vh,64px)}
+#dStep.fit .cardsP.sm .spk{min-height:0;min-width:72px}
+#dStep.fit .hwb{display:flex;flex-direction:column;min-height:0;padding:6px 12px}
+#dStep.fit .hwb h3{font-size:1.05rem;margin:0 0 4px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+#dStep.fit .hwb h3 span{font-weight:400;font-size:.85rem;color:var(--muted);font-family:var(--sans)}
+#dStep.fit .hwrow{flex:1 1 auto;min-height:0;flex-wrap:nowrap;align-items:stretch;gap:12px}
+#dStep.fit .hwimg{height:auto;max-height:100%;min-height:0;max-width:46%;object-fit:contain;align-self:stretch;flex:0 1 auto}
+#dStep.fit .hwsteps{font-size:clamp(1rem,2.6vh,1.3rem);margin:2px 0;padding-left:1.2em;line-height:1.25}
+#dStep.fit .hwtxt{font-size:clamp(1rem,2.6vh,1.3rem);line-height:1.25}
+#dStep.fit .hwtxt p{font-size:1em}
+#dStep.fit .hwtxt li{margin:0}
+#dStep.fit .hwtxt{flex:1 1 40%;min-width:150px}
+#dStep.fit .hwrow.two .hwimg{max-width:21%}
+#dStep.fit .hwrow.two .hwtxt{flex:1 1 50%}
+#dStep.fit .hwtxt{overflow:auto;min-width:0}
+#dStep.fit .fnd{grid-template-columns:auto 1fr;align-items:stretch;min-height:0}
+#dStep.fit .fnd.nopic{grid-template-columns:1fr}
+#dStep.fit .spic{height:100%;width:auto;aspect-ratio:1/1;min-height:0;max-width:44vw}
+#dStep.fit .txt{align-content:center}
+@media (max-width:820px){#dStep.fit .fnd{grid-template-columns:1fr}#dStep.fit .spic{height:auto;width:100%;max-height:200px;aspect-ratio:auto}#dStep.fit{height:auto;max-height:calc(100dvh - 24px);overflow:auto}#dStep.fit .pbody{overflow:visible;flex:0 0 auto;min-height:auto}#dStep.fit .pfoot .mark{min-height:52px}#dStep.fit .hwimg{max-height:240px}#dStep.fit .hwrow{flex-wrap:wrap}#dStep.fit .hwrow.two .hwimg{max-width:46%}#dStep.fit .hwtxt,#dStep.fit .hwrow.two .hwtxt{flex:1 1 100%}}
+.hwb{border:3px solid var(--line);border-radius:18px;background:var(--panel);padding:10px 14px}
+.hwb h3{font-size:1.25rem;margin-bottom:6px}
+.hwrow{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap}
+.hwimg{background:#fff;border:3px solid var(--line);border-radius:14px;padding:4px;max-width:100%;height:auto;max-height:30vh;width:auto}
+.hwsteps{font-size:1.25rem;margin:4px 0;padding-left:1.3em}
+.src{font-size:.9375rem;color:var(--muted);margin:6px 0 0}
+/* write checks and syllable flip boxes */
+.mark{position:relative}
+.mark .gl{position:absolute;left:12px;top:5px;font-size:1.05rem;font-weight:700;color:var(--muted);line-height:1}
+.sub2{display:grid;grid-template-columns:1fr 1fr;gap:8px;flex:1}
+.sub2 .g{display:flex;flex-direction:column;gap:8px;min-width:0}
+.sub2 .mark svg{width:44px;height:44px}
+.pfoot .marks.two{grid-template-columns:1fr 1fr}
+.pfoot .marks.two .g{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;min-width:0}
+@media (max-width:480px){.cardsP,.cardsP.f3,.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.cardsP .card,.cards .card{min-width:0;font-size:clamp(40px,17vw,100px)}.cardsP.sm .card{font-size:clamp(32px,12vw,56px)}.pfoot .marks.two{grid-template-columns:1fr}.sub2{grid-template-columns:1fr}
+#dStep .cardsP.sm .pic{min-height:0;padding:4px 8px;grid-column:1/-1}#dStep .cardsP.sm .spk{min-height:52px;min-width:0}#dStep.fit .cardsP.sm .card{height:56px}
+.pfoot .navrow .btn{padding-inline:12px}.phead{flex-wrap:wrap}.phead .row,.phead .btn{min-width:0;max-width:100%}.phead .row{flex-wrap:wrap}#dStep.fit .pfoot .mark{min-height:48px}}
+.sep{background:var(--sep);color:var(--sep-fg);font-family:var(--slab);font-weight:700;font-size:1.5rem;letter-spacing:.08em;text-transform:uppercase;border-radius:14px;min-height:46px;display:flex;align-items:center;justify-content:center;margin-top:4px}
+.sc{display:flex;flex-direction:column;gap:8px;flex:1 1 150px;min-width:0}
+.sc .syl{flex:none;width:100%}
+.flip{perspective:900px;border:0;background:none;padding:0;width:100%;height:clamp(110px,17vh,180px);cursor:pointer}
+.fi{position:relative;display:block;width:100%;height:100%;transition:transform .55s;transform-style:preserve-3d}
+.flip.on .fi{transform:rotateY(180deg)}
+.ff,.fbk{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:18px;display:flex}
+.ff{border:4px solid var(--line);background:var(--panel)}
+.fbk{transform:rotateY(180deg);border:4px solid var(--fg);background:var(--panel);align-items:stretch;justify-content:space-around;gap:6px;padding:6px}
+.fw{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:2px}
+.fw .wp{flex:1;min-height:0;width:100%;display:flex;align-items:center;justify-content:center;background:var(--ghost);border-radius:10px;overflow:hidden}
+.fw .wp svg{width:40%;height:40%;color:var(--muted)}
+.fw .wp img{max-width:100%;max-height:100%;object-fit:contain}
+.fw .ww{font-size:clamp(.8rem,1.9vh,1.15rem);font-weight:700;display:flex;gap:.04em;justify-content:center;flex-wrap:nowrap;white-space:nowrap;line-height:1.1}
+.fw .ww .t{background:var(--accent);color:var(--accent-fg);border-radius:6px;padding:0 .1em}
+.credit{margin:4px 0 0;text-align:right}
+/* syllable popup */
+.stepname.sylhead{font-size:clamp(2.5rem,8vh,4rem);font-family:var(--sans);font-weight:700;padding:0 28px;line-height:1;min-height:0;height:clamp(64px,12vh,96px)}
+.words{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));grid-auto-rows:minmax(0,1fr);gap:10px;flex:1 1 0;min-height:0}
+.wcard{border:4px solid var(--fg);border-radius:22px;background:var(--panel);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:10px;min-width:0;min-height:0;overflow:hidden;text-align:center}
+.wcard .wp{position:relative;flex:1 1 0;width:100%;min-height:0;display:flex;align-items:center;justify-content:center;background:var(--ghost);border-radius:14px;overflow:hidden}
+.wcard .wp svg{width:clamp(48px,10vh,90px);height:clamp(48px,10vh,90px);color:var(--muted)}
+.wcard .wp img{position:absolute;inset:4px;width:calc(100% - 8px);height:calc(100% - 8px);object-fit:contain}
+.wcard .ww{flex:none}
+.wcard .ww{font-size:clamp(1.75rem,5.5vh,3rem);font-weight:700;display:flex;gap:.08em;flex-wrap:wrap;justify-content:center;line-height:1.2}
+.wcard .ww .t{background:var(--accent);color:var(--accent-fg);border-radius:10px;padding:0 .14em}
+/* guion and settings */
+.doc{padding:12px 20px 20px;display:flex;flex-direction:column;gap:12px;font-size:1.25rem}
+.doc h2{font-size:1.625rem}
+.doc h3{font-size:1.375rem;margin-top:6px}
+.doc p,.doc ul{margin:4px 0}
+.doc ul{padding-left:1.3em}
+.say{background:var(--pale);border:3px solid var(--line);border-radius:14px;padding:8px 14px;margin:6px 0}
+.set label{display:flex;gap:12px;align-items:center;min-height:52px}
+.set input[type=checkbox]{width:32px;height:32px}
+.set select{min-height:52px;padding:4px 12px;border:3px solid var(--fg);border-radius:12px;background:var(--panel)}
+@media (max-width:820px){
+  .cards,.cardsP{grid-template-columns:1fr 1fr}
+  .cardsP.f3{grid-template-columns:1fr 1fr}
+  .fnd{grid-template-columns:1fr}
+  .spic{max-height:180px;margin:0 auto}
+  .spk{min-height:90px}
+  .routine{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .pic{grid-column:1/-1;min-height:150px}
+}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+<main class="app" id="app" lang="es"></main>
+<div class="vh" id="live" role="status" aria-live="polite"></div>
+<dialog id="dStep" aria-labelledby="dStepT"></dialog>
+<dialog id="dSyl" aria-labelledby="dSylT"></dialog>
+<dialog id="dGuion" aria-labelledby="dGuionT"></dialog>
+<dialog id="dCfg" aria-labelledby="dCfgT"></dialog>
+<script>
+"use strict";
+document.documentElement.lang="es-MX";
+const DATA=/*DATA_START*/__DATA__/*DATA_END*/;
+const LET=DATA.LET,NAMES=DATA.NAMES,ANCH=DATA.ANCH,SENT=DATA.SENT,HW=DATA.HW,CLIPS=DATA.CLIPS,SYL=DATA.SYL;
+/* Pictures: put a data URL or file path here for each anchor word to replace the placeholder, for example IMG.mono='mono.png' */
+/* Sentence pictures are keyed by letter (IMG['m']); word pictures are keyed by the word without hyphens (IMG.mariposa). */
+const IMG={};
+if(DATA.SIMG)Object.keys(DATA.SIMG).forEach(k=>{IMG['s_'+k]=DATA.SIMG[k]});
+if(DATA.WIMG)Object.keys(DATA.WIMG).forEach(k=>{IMG[k]=DATA.WIMG[k]});
+if(DATA.AIMG)Object.keys(DATA.AIMG).forEach(k=>{IMG['a_'+k]=DATA.AIMG[k]});
+const ALIAS={cu:'ku'}; /* the stored clip named cu is two syllables; ku is the correct /ku/ */
+const STEPS=['name','sound','find','write'];
+const VOWELS=['a','e','i','o','u'];
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const U1=x=>x.charAt(0).toUpperCase()+x.slice(1);
+const isV=x=>VOWELS.includes(x);
+const fname=x=>x.replace(/ñ/g,'ny');
+/* ---------- settings ---------- */
+const KEY='letra-del-dia-1';
+let S={i:0,names:true,theme:'system'};
+try{const j=JSON.parse(localStorage.getItem(KEY)||'null');if(j)S=Object.assign(S,j)}catch(e){}
+if(!(S.i>=0&&S.i<LET.length))S.i=0;
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function applyTheme(){const r=document.documentElement;if(S.theme==='system')r.removeAttribute('data-theme');else r.setAttribute('data-theme',S.theme)}
+const tok=()=>LET[S.i];
+/* ---------- per-letter state (not saved) ---------- */
+let D=null;
+function resetD(){D={flip:{},marks:{name:[0,0,0],sound:[0,0,0],find:[0,0,0],write:[0,0,0,0,0,0]},pt:{name:'both',sound:'both'},found:{},own:false,ownOpen:false,part:0}}
+resetD();
+function announce(m){const l=$('#live');l.textContent='';setTimeout(()=>{l.textContent=m},30)}
+/* ---------- audio ---------- */
+let AC=null;const BUF={},PEND={};let CUR=null;
+function actx(){if(AC===null){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){AC=false}}if(AC&&AC.state==='suspended')AC.resume().catch(()=>{});return AC}
+function b64buf(b){const bin=atob(b);const u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return u.buffer}
+function loadClip(n){
+  n=ALIAS[n]||n;
+  if(n in BUF)return Promise.resolve(BUF[n]);if(PEND[n])return PEND[n];
+  const c=actx();if(!c||!CLIPS[n])return Promise.resolve(null);
+  PEND[n]=new Promise((ok,no)=>{try{const p=c.decodeAudioData(b64buf(CLIPS[n]),ok,no);if(p&&p.catch)p.catch(no)}catch(e){no(e)}}).then(b=>{BUF[n]=b;return b}).catch(()=>{BUF[n]=null;return null});
+  return PEND[n];
+}
+function stopAudio(){stopRead();if(CUR){try{CUR.onended=null;CUR.stop()}catch(e){}CUR=null}try{speechSynthesis.cancel()}catch(e){}}
+async function playClip(n){
+  n=ALIAS[n]||n;
+  const b=await loadClip(n);if(!b)return false;const c=actx();if(!c)return false;
+  return new Promise(res=>{
+    stopAudio();const s=c.createBufferSource();s.buffer=b;s.playbackRate.value=1;s.connect(c.destination);
+    let done=false;const fin=()=>{if(!done){done=true;if(CUR===s)CUR=null;res(true)}};
+    s.onended=fin;CUR=s;s.start();setTimeout(()=>{try{s.stop()}catch(e){};fin()},b.duration*1000+80);
+  });
+}
+function tts(text){
+  return new Promise(res=>{
+    try{stopAudio();const u=new SpeechSynthesisUtterance(text);u.lang='es-MX';u.rate=.85;
+      const v=(speechSynthesis.getVoices()||[]).filter(v=>/^es/i.test(v.lang));const p=v.find(x=>/MX|US|419/i.test(x.lang))||v[0];if(p)u.voice=p;
+      u.onend=res;u.onerror=res;speechSynthesis.speak(u);setTimeout(res,Math.max(1500,text.length*350))}catch(e){res()}
+  });
+}
+async function say(text){if(!(await playClip(fname(text))))await tts(text)}
+function soundClip(t){return isV(t)?t:(t==='r'||t==='rr')?'_rr':'_'+fname(t)}
+async function playSound(t,ctx){
+  if(t==='h'){announce('La h no suena.');return}
+  if(t==='x'&&ctx){if(ctx.initial){await playClip('_s')}else{if(await playClip('_k'))await playClip('_s')}return}
+  if(t==='x'){if(await playClip('_k'))await playClip('_s');await new Promise(r=>setTimeout(r,600));await playClip('_s');announce('La x suena /ks/ en medio de la palabra, como en taxi, y /s/ al inicio, como en xilófono.');return}
+  await playClip(soundClip(t))||announce('Sin audio para esta letra.');
+}
+/* read-aloud with word highlighting */
+let READ=null,RT=[];
+function setRd(i){document.querySelectorAll('#dStep .tw.rd').forEach(x=>x.classList.remove('rd'));if(i>=0){const e=document.querySelector('#dStep .tw[data-wi="'+i+'"]');if(e)e.classList.add('rd')}}
+function stopRead(){RT.forEach(clearTimeout);RT=[];if(READ){READ=null;setRd(-1)}}
+function readSentence(){
+  const t=tok(),ws=textWords(textList(t));if(!ws.length)return;
+  try{speechSynthesis.cancel()}catch(e){}
+  if(CUR){try{CUR.onended=null;CUR.stop()}catch(e){}CUR=null}
+  RT.forEach(clearTimeout);RT=[];
+  const tokn={};READ=tokn;
+  const starts=[];let pos=0;ws.forEach(w=>{starts.push(pos);pos+=w.length+1});
+  let gotB=false;
+  const end=()=>{if(READ===tokn){READ=null;setRd(-1)}};
+  try{
+    const u=new SpeechSynthesisUtterance(ws.join(' '));u.lang='es-MX';u.rate=.8;
+    const v=(speechSynthesis.getVoices()||[]).filter(v=>/^es/i.test(v.lang));const p=v.find(x=>/MX|US|419/i.test(x.lang))||v[0];if(p)u.voice=p;
+    u.onboundary=e=>{if(READ!==tokn)return;if(e.name&&e.name!=='word')return;gotB=true;let i=starts.length-1;while(i>0&&starts[i]>e.charIndex)i--;setRd(i)};
+    u.onend=end;u.onerror=end;
+    speechSynthesis.speak(u);
+    RT.push(setTimeout(()=>{ /* no boundary events from this voice: estimate the timing */
+      if(READ!==tokn||gotB)return;let at=0;
+      ws.forEach((w,i)=>{RT.push(setTimeout(()=>{if(READ===tokn&&!gotB)setRd(i)},at));at+=380+95*w.length});
+      RT.push(setTimeout(end,at+300));
+    },650));
+  }catch(e){end()}
+}
+/* ---------- helpers ---------- */
+const nm=t=>NAMES[t];
+const anchor=t=>ANCH[t];
+const LC=t=>t==='rr';
+const pair=t=>LC(t)?t:U1(t)+' '+t;
+const iconSpk='<svg class="icon" viewBox="0 0 36 36" aria-hidden="true"><path d="M6 14h6l8-6v20l-8-6H6z" fill="currentColor"/><path d="M24 12c3 3 3 9 0 12M28 8c5 5 5 15 0 20" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>';
+const iconOk='<svg viewBox="0 0 36 36" aria-hidden="true"><path d="M7 19l8 8 15-17" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const iconPic='<svg viewBox="0 0 48 48" aria-hidden="true"><rect x="5" y="9" width="38" height="30" rx="5" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="17" cy="20" r="4" fill="currentColor"/><path d="M8 36l11-11 8 8 6-6 9 9" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/></svg>';
+const STEPNAME=()=>({name:S.names?'Nombrarla':'Verla',sound:'Su sonido',find:'Encontrarla',write:'Escribirla'});
+function cardsHTML(P,noPic){ // P: pointing state or null
+  const t=tok(),v=isV(t)?' v':'';
+  const hi=P||'';
+  const a=anchor(t);
+  const img=IMG['a_'+a]?`<img src="${esc(IMG['a_'+a])}" alt="Imagen de ${esc(a)}">`:iconPic;
+  return `${LC(t)?'':`<div class="card${v}${hi==='uc'||hi==='both'?' point':''}" lang="es" data-card="uc">${esc(U1(t))}<small>Mayúscula</small></div>`}
+  <div class="card${v}${hi==='lc'||hi==='both'?' point':''}" lang="es" data-card="lc"${LC(t)?' style="grid-column:span 2"':''}>${esc(t)}${LC(t)?'':'<small>Minúscula</small>'}</div>
+  <button type="button" class="spk" data-act="snd" aria-label="Escuchar el sonido de la letra ${esc(t)}">${iconSpk}</button>
+  ${noPic?'':`<button type="button" class="pic" data-act="word" aria-label="Decir ${esc(a)}"><span class="ph">${img}</span><span class="w" lang="es">${esc(a)}</span></button>`}`;
+}
+/* ---------- board ---------- */
+function wMark(i){const t=tok(),up=i<3,r=i%3;const b0=LC(t)?'r':t,gl=up?U1(b0):b0;
+  return `<button type="button" class="mark" data-act="mark" data-step="write" data-r="${i}" aria-pressed="${!!D.marks.write[i]}" aria-label="Escribirla, ${up?'mayúscula':'minúscula'}, ronda ${r+1} de 3"><span class="gl" aria-hidden="true" lang="es">${esc(gl)}</span>${iconOk}</button>`}
+function writeMarksBoard(){return `<div class="sub2">${[0,3].map(o=>`<div class="g">${[0,1,2].map(r=>wMark(o+r)).join('')}</div>`).join('')}</div>`}
+function flipWords(s){
+  return (SYL[s]||[]).map(w=>{const parts=w.split('-'),word=parts.join('');
+    const sp=parts.map(x=>base2(x)===s?`<span class="t">${esc(x)}</span>`:`<span>${esc(x)}</span>`).join('');
+    return `<span class="fw"><span class="wp">${IMG[word]?`<img src="${esc(IMG[word])}" alt="">`:iconPic}</span><span class="ww" lang="es">${sp}</span></span>`}).join('')}
+function findDone(){const c=counts(tok());return c.total>0&&c.got===c.total}
+function autoMark(){const d=findDone();return `<div class="mark auto${d?' on':''}" role="img" aria-label="Encontrarla: ${d?'todas las letras encontradas':'faltan letras por encontrar'}">${iconOk}</div>`}
+function sylList(t){
+  if(isV(t))return [];
+  return VOWELS.filter(v=>SYL[t+v]).map(v=>({s:t+v,note:t==='x'?'/ks/ · /s/':t==='c'&&(v==='e'||v==='i')?'/s/':t==='g'&&(v==='e'||v==='i')?'/j/':''}));
+}
+function render(){
+  const t=tok(),sn=STEPNAME(),sy=sylList(t);
+  $('#app').innerHTML=`
+  <h1 class="vh">Letra del día</h1>
+  <div class="bar">
+    <button type="button" class="btn sq" data-act="prev" aria-label="Letra anterior"><span aria-hidden="true">◀</span></button>
+    <label class="vh" for="pick">Elegir la letra</label>
+    <select id="pick" lang="es">${LET.map((x,i)=>`<option value="${i}"${i===S.i?' selected':''}>${esc(pair(x))}</option>`).join('')}</select>
+    <button type="button" class="btn sq" data-act="next" aria-label="Letra siguiente"><span aria-hidden="true">▶</span></button>
+    <span class="sp"></span>
+    <button type="button" class="btn" data-act="clear">Quitar marcas</button>
+    <button type="button" class="btn" data-act="guion">Guion</button>
+    <button type="button" class="btn sq" data-act="cfg" aria-label="Configuración"><span aria-hidden="true">⚙</span></button>
+  </div>
+  <div class="cards">${cardsHTML('')}</div>
+  <div class="routine">${STEPS.map(k=>`<div class="col">
+    <button type="button" class="colhead" data-act="open" data-step="${k}">${esc(sn[k])}</button>
+    ${k==='find'?autoMark():k==='write'?writeMarksBoard():[0,1,2].map(r=>`<button type="button" class="mark" data-act="mark" data-step="${k}" data-r="${r}" aria-pressed="${!!D.marks[k][r]}" aria-label="${esc(sn[k])}, ronda ${r+1} de 3">${iconOk}</button>`).join('')}</div>`).join('')}</div>
+  ${sy.length?`<div class="sep" role="heading" aria-level="2">Sílabas</div>
+  <div class="syls" role="group" aria-label="Sílabas con ${esc(t)}">${sy.map(x=>{const on=!!D.flip[x.s];return `<div class="sc"><button type="button" class="syl" data-act="syl" data-s="${esc(x.s)}" lang="es">${esc(x.s)}${x.note?`<small>${esc(x.note)}</small>`:''}</button>
+    <button type="button" class="flip${on?' on':''}" data-act="flip" data-s="${esc(x.s)}" aria-pressed="${on}" aria-label="Palabras con ${esc(x.s)}. ${on?'Tocar para ocultar las imágenes':'Tocar para ver las imágenes'}"><span class="fi"><span class="ff" aria-hidden="true"></span><span class="fbk"${on?'':' aria-hidden="true"'} lang="es">${flipWords(x.s)}</span></span></button></div>`}).join('')}</div>`:''}
+  <p class="src credit">Imágenes: Canva. Imágenes de las palabras ancla: Bluebonnet Learning, Texas Education Agency, CC BY-NC-SA 4.0.</p>`;
+}
+/* ---------- step dialogs ---------- */
+let curStep=null,opener=null;
+function marksHTML(k){
+  const sn=STEPNAME();
+  if(k==='find')return `<div class="marks one">${autoMark()}</div>`;
+  if(k==='write')return `<div class="marks two" role="group" aria-label="Rondas de Escribirla">${[0,3].map(o=>`<div class="g">${[0,1,2].map(r=>wMark(o+r)).join('')}</div>`).join('')}</div>`;
+  return `<div class="marks" role="group" aria-label="Rondas de ${esc(sn[k])}">${[0,1,2].map(r=>`<button type="button" class="mark" data-act="mark" data-step="${k}" data-r="${r}" aria-pressed="${!!D.marks[k][r]}" aria-label="${esc(sn[k])}, ronda ${r+1} de 3">${iconOk}</button>`).join('')}</div>`;
+}
+/* find it */
+function wordToks(w){
+  const out=[];const re=/qu(?=[eiéí])|ch|ll|rr|./giu;let m;
+  while((m=re.exec(w))){out.push({s:m[0],tok:m[0].toLowerCase()})}
+  return out;
+}
+const base=x=>({á:'a',é:'e',í:'i',ó:'o',ú:'u'}[x]||x);
+function isHit(x,t){return x.tok===t||(isV(t)&&base(x.tok)===t)}
+function textList(t){return (D.own&&D.ownText)?[D.ownText]:(SENT[t]||[])}
+function textWords(list){const w=[];list.forEach(l=>l.split(/\s+/).filter(Boolean).forEach(x=>w.push(x)));return w}
+function counts(t){const ws=textWords(textList(t));let total=0,got=0;ws.forEach((w,wi)=>wordToks(w).forEach((x,ti)=>{if(isHit(x,t)){total++;if(D.found[wi+'-'+ti])got++}}));return {total,got,ws}}
+function findHTML(){
+  const t=tok(),c=counts(t);
+  const words=c.ws.map((w,wi)=>{const tk=wordToks(w);const spans=tk.map((x,ti)=>{const on=isHit(x,t)&&D.found[wi+'-'+ti];return `<span class="ch${on?' hl':''}" data-ti="${ti}">${esc(x.s)}</span>`}).join('');
+    return `<button type="button" class="tw" data-act="tfind" data-wi="${wi}" lang="es" aria-label="${esc(w)}">${spans}</button>`}).join(' ');
+  const sk='s_'+t,sent=textList(t).join(' ');
+  const pic=D.own?'':`<div class="spic">${IMG[sk]?`<img src="${esc(IMG[sk])}" alt="Dibujo de la oración: ${esc(sent)}">`:iconPic}</div>`;
+  return `<div class="row" style="justify-content:space-between"><div class="fb" role="status"><span>${c.got} de ${c.total}</span></div>
+   <div class="row"><button type="button" class="btn primary" data-act="tread">${iconSpk} Escuchar</button><button type="button" class="btn" data-act="tclear">Quitar resaltado</button><button type="button" class="btn" data-act="townt" aria-expanded="${!!D.ownOpen}">Texto propio</button>${D.own?'<button type="button" class="btn" data-act="tprog">Texto del programa</button>':''}</div></div>
+   <div class="fnd${D.own?' nopic':''}">${pic}<div class="txt" lang="es">${words}</div></div>
+   ${D.ownOpen?`<div><label class="vh" for="owntext">Texto propio</label><textarea id="owntext" rows="3" lang="es" class="ta">${esc(D.ownText||'')}</textarea><div class="row" style="margin-top:8px"><button type="button" class="btn" data-act="town">Usar este texto</button></div></div>`:''}`;
+}
+/* write it */
+const hwParts=t=>({rr:['r'],qu:['q','u']}[t]||[t]);
+function writeCtl(){
+  const t=tok(),parts=hwParts(t);
+  const tabs=parts.length>1?`<div class="row" role="group" aria-label="Letra">${parts.map((x,i)=>`<button type="button" class="btn" data-act="part" data-v="${i}" aria-pressed="${i===D.part}"${i===D.part?' style="background:var(--fg);color:var(--bg)"':''} lang="es">${esc(x)}</button>`).join('')}</div>`:'';
+  return tabs+`<button type="button" class="btn" data-act="read">${iconSpk} Leer los pasos</button>`;
+}
+function writeHTML(){
+  const t=tok(),parts=hwParts(t);if(!(D.part>=0&&D.part<parts.length))D.part=0;
+  const p=parts[D.part],h=HW[p];
+  const mk=(form,rec)=>{
+    const L=form==='uc'?U1(p):p;const alt=`Guía de trazo de la ${L} ${form==='uc'?'mayúscula':'minúscula'}, con flechas numeradas y líneas de escritura`;
+    const imgs=(rec.imgs||[]).map(im=>`<img class="hwimg" src="${im}" alt="${esc(alt)}">`).join('');
+    return `<section class="hwb"><h3 lang="es">${form==='uc'?'Mayúscula':'Minúscula'} ${esc(L)} <span>${esc(rec.src)}</span></h3><div class="hwrow${(rec.imgs||[]).length>1?' two':''}">${imgs}<div class="hwtxt"><p lang="es" style="margin:0;font-weight:700">${esc(rec.start)}</p><ol class="hwsteps" lang="es">${rec.steps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol></div></div></section>`};
+  const note=t==='rr'?'<p class="src" style="margin:0">La rr se escribe con dos r y solo aparece en medio de una palabra. Aquí se practican la R y la r. Pasos de la r: K U3 L14.</p>':'';
+  return `${note}<div class="hw">${h?mk('uc',h.uc)+mk('lc',h.lc):''}</div>`;
+}
+function stepBody(k){
+  const t=tok();
+  if(k==='name'||k==='sound'){
+    const lab=k==='name'?(S.names?'Decir el nombre':'Decir el sonido'):'Escuchar el sonido';
+    return `<div class="cardsP">${cardsHTML(D.pt[k])}</div>
+     <div class="row"><button type="button" class="btn primary" data-act="${k==='name'&&S.names?'nameSay':'snd'}">${iconSpk} ${lab}</button><button type="button" class="btn" data-act="point" data-k="${k}">Señalar la siguiente</button></div>`;
+  }
+  if(k==='find')return `<div class="cardsP sm f3">${cardsHTML('',true)}</div>`+findHTML();
+  return `<div class="cardsP sm">${cardsHTML('')}</div>`+writeHTML();
+}
+function renderStep(keepFocus){
+  const k=curStep,sn=STEPNAME(),dlg=$('#dStep');
+  const fk=keepFocus&&document.activeElement&&dlg.contains(document.activeElement)?document.activeElement.dataset.fk:null;
+  dlg.classList.toggle('fit',k==='write'||k==='find');
+  dlg.innerHTML=`<div class="phead"><h2 class="stepname" id="dStepT">${esc(sn[k])}</h2>${k==='write'?'<div class="row">'+writeCtl()+'</div>':''}<button type="button" class="btn" data-act="close">Tablero</button></div>
+   <div class="pbody">${stepBody(k)}</div>
+   <div class="pfoot">${marksHTML(k)}<div class="navrow"><button type="button" class="btn" data-act="back"${STEPS.indexOf(k)===0?' disabled':''}>← Atrás</button><button type="button" class="btn primary" data-act="fwd"${STEPS.indexOf(k)===STEPS.length-1?' disabled':''}>Siguiente paso →</button></div></div>`;
+}
+function enterStep(k){stopAudio();curStep=k;renderStep();const d=$('#dStep');d.scrollTop=0;if(k==='find')setTimeout(()=>{if(curStep==='find'&&d.open)readSentence()},350)}
+function openStep(k,from){
+  opener=from||opener;const d=$('#dStep');if(!d.open)d.showModal();enterStep(k);
+}
+/* syllable popup */
+let curSyl=null;
+function sylWordHTML(w){
+  const parts=w.split('-'),word=parts.join(''),s=curSyl;
+  const spans=parts.map(x=>base2(x)===s?`<span class="t">${esc(x)}</span>`:`<span>${esc(x)}</span>`).join('');
+  const im=IMG[word]?`<img src="${esc(IMG[word])}" alt="Dibujo de ${esc(word)}">`:iconPic;
+  return `<button type="button" class="wcard" data-act="sw" data-w="${esc(word)}" lang="es" aria-label="${esc(word)}"><span class="wp">${im}</span><span class="ww">${spans}</span></button>`;
+}
+function base2(x){return x.toLowerCase().replace(/[áéíóúü]/g,c=>({á:'a',é:'e',í:'i',ó:'o',ú:'u',ü:'u'}[c]))}
+function sylHTML(){
+  const s=curSyl,list=sylList(tok()),i=list.findIndex(x=>x.s===s),note=list[i]&&list[i].note;
+  return `<div class="phead"><h2 class="stepname sylhead" id="dSylT" lang="es">${esc(s)}${note?`<span class="sylnote">${esc(note)}</span>`:''}</h2><button type="button" class="btn" data-act="close">Tablero</button></div>
+  <div class="pbody"><div class="words">${(SYL[s]||[]).map(sylWordHTML).join('')}</div></div>
+  <div class="pfoot"><div class="navrow"><button type="button" class="btn" data-act="sylgo" data-d="-1"${i<=0?' disabled':''}>← Anterior</button><button type="button" class="btn primary" data-act="sylsnd">${iconSpk} <span lang="es">${esc(s)}</span></button><button type="button" class="btn" data-act="sylgo" data-d="1"${i>=list.length-1?' disabled':''}>Siguiente →</button></div></div>`;
+}
+function openSyl(s,from){curSyl=s;opener=from||opener;const d=$('#dSyl');d.innerHTML=sylHTML();if(!d.open)d.showModal();d.scrollTop=0}
+/* ---------- guion ---------- */
+function guionHTML(){
+  const t=tok(),n=S.names?nm(t):t,a=anchor(t),sy=isV(t)?'':`ba`;
+  const snd=t==='h'?'La h no representa ningún sonido (h silenciosa).':'';
+  return `<div class="phead"><h2 class="stepname" id="dGuionT">Guion de la letra del día</h2><button type="button" class="btn" data-act="close">Cerrar</button></div>
+  <div class="doc" lang="es">
+   <p>Rutina para estudiantes que están aprendiendo las letras. Cada paso tiene tres rondas. En cada ronda, cambie lo que señala: la mayúscula, la minúscula o las dos.</p>
+   <h3>Nombrarla</h3>
+   ${S.names?(LC(t)?`<p class="say">“Estas son las letras ${esc(n)}. Son dos r juntas.”</p><p>La rr aparece solo en medio de una palabra, como en perro. Señale las dos letras. Pregunte: “¿Qué letras son estas?”</p>`:`<p class="say">“Esta es la letra ${esc(n)}. Esta es la ${esc(n)} mayúscula y esta es la ${esc(n)} minúscula.”</p><p>Señale cada letra. Pregunte: “¿Qué letra es esta?”</p>`):`<p class="say">“Esta es la letra de hoy. Esta letra hace el sonido ${esc(t==='h'?'(ninguno)':'/'+t+'/')}.”</p><p>La guía de Kínder de Bluebonnet pide referirse a la letra por su sonido. Nombres de letras: desactivados.</p>`}
+   <h3>Su sonido</h3>
+   ${t==='h'?`<p class="say">“${esc(snd)} Se escribe, pero no suena.”</p>`:(t==='x'?`<p class="say">“Esta letra puede tener dos sonidos, /s/ y /ks/. Al inicio de una palabra suena /s/, como en xilófono. En medio de una palabra suena /ks/, como en taxi.”</p><p>Muestre la imagen de xilófono. La aplicación dice /ks/ y después /s/. Fuente: Bluebonnet K U5 L15, págs. 236 y 241. Pregunte: “¿Qué sonidos puede tener esta letra?”</p>`:`<p class="say">“Esta letra representa este sonido: /${esc(t)}/. Escuchen: /${esc(t)}/ como en ${esc(a)}.”</p><p>Muestre la imagen de ${esc(a)}. Estire el primer sonido de la palabra. Pregunte: “¿Qué sonido representa esta letra?”</p>`)}
+   <h3>Encontrarla</h3>
+   <p class="say">“Ahora busquemos la letra ${esc(n)}. Cuando la encuentren, ${S.names?'digan el nombre y ':''}el sonido.”</p>
+   <p>La aplicación lee la oración y resalta cada palabra. Después el estudiante busca la letra en la oración y la toca. Cuando la encuentra, diga ${S.names?'el nombre y ':''}el sonido. La marca grande aparece sola cuando se encuentran todas las letras.</p>
+   <h3>Sílabas</h3>
+   <p>Señale una sílaba. Pida a los estudiantes que digan palabras que la tengan; escriba o señale sus ideas en la caja de abajo. Toque la caja para voltearla y ver las imágenes. Diga la palabra y señale la sílaba resaltada. Si toca la sílaba, se abre una ventana más grande con las mismas palabras. Los estudiantes escuchan y miran la sílaba. No leen las palabras.</p>
+   <h3>Escribirla</h3>
+   <p class="say">“Voy a mostrarles cómo se escribe la letra ${esc(LC(t)?'r':n)}. Primero la mayúscula y después la minúscula. Mientras escribo, digo cada paso.”</p>
+   <p>Lea los pasos de la guía mientras traza. El estudiante traza en el aire, en papel, en una superficie o con un lápiz alternativo (teclado, tablero de letras, dispositivo de AAC, mirada o lápiz adaptado). Muestre cómo hacerlo con ese lápiz.</p>
+   <h3>Cómo responde el estudiante sin hablar</h3>
+   <ul><li>Señala la letra, la imagen o la opción con el dedo, la mano, un puntero o la cabeza.</li><li>Mira la opción cuando las tarjetas se presentan separadas y quietas.</li><li>Usa un dispositivo de comunicación (AAC), un teclado o un tablero de letras.</li><li>Si el estudiante no puede señalar, use el barrido asistido por un compañero: señale o lea cada opción y el estudiante responde sí o no con su propio método.</li></ul>
+   <h3>Fuentes</h3>
+   <p class="src">Rutina: Explicit Alphabet Knowledge Instructional Routine (Jones et al., 2013), adaptada al español. Palabras ancla, trazos y textos: Bluebonnet Learning, Texas Education Agency, CC BY-NC-SA 4.0. Sonidos aislados: Sounds of Speech, University of Iowa. Imágenes de las oraciones y de las palabras: Canva. Imágenes de las palabras ancla: tarjetas de imágenes de Bluebonnet (K U2, U3 y U4); Canva para bata, chocolate, tiburón, wifi, xilófono, yoyo y zorro. Tres oraciones vienen de K U2, pág. 311. Las demás las escribió el adaptador.</p>
+  </div>`;
+}
+function cfgHTML(){
+  return `<div class="phead"><h2 class="stepname" id="dCfgT">Configuración</h2><button type="button" class="btn" data-act="close">Cerrar</button></div>
+  <div class="doc set" lang="es"><label><input type="checkbox" id="cfgNames"${S.names?' checked':''}> Usar los nombres de las letras</label>
+  <p class="src">La guía de Kínder de Bluebonnet evita el nombre de la letra y se refiere a ella por su sonido.</p>
+  <label for="cfgTheme">Tema</label><select id="cfgTheme"><option value="system"${S.theme==='system'?' selected':''}>Igual que el dispositivo</option><option value="light"${S.theme==='light'?' selected':''}>Claro</option><option value="dark"${S.theme==='dark'?' selected':''}>Oscuro</option><option value="hc"${S.theme==='hc'?' selected':''}>Alto contraste</option></select></div>`;
+}
+function openDlg(id,html,from){const d=$(id);d.innerHTML=html;opener=from||opener;if(!d.open)d.showModal()}
+/* ---------- events ---------- */
+function setLetter(i){S.i=(i+LET.length)%LET.length;save();resetD();D.syl='';render();announce('Letra '+pair(tok()));if(curStep&&$('#dStep').open)renderStep();if($('#dSyl').open)$('#dSyl').close()}
+async function act(el,ev){
+  const a=el.dataset.act,t=tok();
+  switch(a){
+    case 'prev':setLetter(S.i-1);return;
+    case 'next':setLetter(S.i+1);return;
+    case 'clear':resetD();D.syl='';render();if($('#dStep').open)renderStep();announce('Marcas quitadas');return;
+    case 'guion':openDlg('#dGuion',guionHTML(),el);return;
+    case 'cfg':openDlg('#dCfg',cfgHTML(),el);return;
+    case 'close':{const d=el.closest('dialog');d.close();return}
+    case 'open':openStep(el.dataset.step,el);return;
+    case 'mark':{const k=el.dataset.step,r=+el.dataset.r;D.marks[k][r]=D.marks[k][r]?0:1;render();if($('#dStep').open){const f=document.activeElement;renderStep();const b=$('#dStep').querySelector(`.mark[data-step="${k}"][data-r="${r}"]`);if(b)b.focus()}else{const b=$(`.mark[data-step="${k}"][data-r="${r}"]`);if(b)b.focus()}return}
+    case 'back':{const i=STEPS.indexOf(curStep);if(i>0)enterStep(STEPS[i-1]);return}
+    case 'fwd':{const i=STEPS.indexOf(curStep);if(i<STEPS.length-1)enterStep(STEPS[i+1]);return}
+    case 'snd':playSound(t);return;
+    case 'nameSay':say(nm(t));return;
+    case 'word':say(anchor(t));return;
+    case 'syl':openSyl(el.dataset.s,el);return;
+    case 'flip':{const s=el.dataset.s;D.flip[s]=!D.flip[s];el.classList.toggle('on',!!D.flip[s]);el.setAttribute('aria-pressed',String(!!D.flip[s]));el.setAttribute('aria-label','Palabras con '+s+'. '+(D.flip[s]?'Tocar para ocultar las imágenes':'Tocar para ver las imágenes'));const bk=el.querySelector('.fbk');if(D.flip[s])bk.removeAttribute('aria-hidden');else bk.setAttribute('aria-hidden','true');if(D.flip[s])say(SYL[s][0].split('-').join(''));return}
+    case 'sylsnd':say(curSyl);return;
+    case 'sylgo':{const l=sylList(tok()),i=l.findIndex(x=>x.s===curSyl)+(+el.dataset.d);if(l[i]){curSyl=l[i].s;$('#dSyl').innerHTML=sylHTML();const b=$('#dSyl').querySelector(`[data-act="sylgo"][data-d="${el.dataset.d}"]:not([disabled])`)||$('#dSyl').querySelector('[data-act="sylsnd"]');if(b)b.focus();say(curSyl)}return}
+    case 'sw':say(el.dataset.w);return;
+    case 'tread':readSentence();return;
+    case 'point':{const k=el.dataset.k,o=(LC(tok())?['lc','both']:['uc','lc','both']).filter(x=>x!==D.pt[k]);D.pt[k]=o[Math.floor(Math.random()*o.length)];renderStep();const b=$('#dStep').querySelector('[data-act="point"]');if(b)b.focus();
+      announce(D.pt[k]==='uc'?'Mayúscula':D.pt[k]==='lc'?'Minúscula':'Las dos');if(k==='sound')playSound(t);return}
+    case 'tfind':{
+      stopAudio();
+      const wi=+el.dataset.wi,ws=textWords(textList(t)),w=ws[wi];if(!w)return;const tk=wordToks(w);
+      const ct=ev&&ev.target&&ev.target.closest?ev.target.closest('.ch'):null;let ti=ct&&el.contains(ct)?+ct.dataset.ti:-1;
+      const hits=tk.map((x,i)=>isHit(x,t)?i:-1).filter(i=>i>=0);
+      const tgt=ti>=0?(hits.includes(ti)?[ti]:[]):hits;
+      if(!tgt.length){announce('Aquí no está la letra. Mire otra vez.');return}
+      const allOn=tgt.every(i=>D.found[wi+'-'+i]);tgt.forEach(i=>{if(allOn)delete D.found[wi+'-'+i];else D.found[wi+'-'+i]=1});
+      renderStep();const nb=$('#dStep').querySelector(`.tw[data-wi="${wi}"]`);if(nb)nb.focus();
+      if(!allOn)playSound(t,t==='x'?{initial:tgt[0]===0}:null);const c=counts(t);render();announce(c.total&&c.got===c.total?`Encontradas todas: ${c.got} de ${c.total}`:`${c.got} de ${c.total}`);return}
+    case 'tclear':stopAudio();D.found={};render();renderStep();return;
+    case 'townt':D.ownOpen=!D.ownOpen;renderStep();if(D.ownOpen){const x=$('#owntext');if(x)x.focus()}return;
+    case 'town':{const v=($('#owntext')||{}).value||'';D.ownText=v.trim();D.own=!!D.ownText;D.found={};render();renderStep();return}
+    case 'tprog':D.own=false;D.found={};render();renderStep();return;
+    case 'part':D.part=+el.dataset.v;renderStep();return;
+    case 'read':{
+      const p=hwParts(t)[D.part],h=HW[p];if(!h)return;
+      stopAudio();const txt=['uc','lc'].map(f=>`${f==='uc'?'Mayúscula':'Minúscula'} ${f==='uc'?U1(p):p}. ${h[f].start} ${h[f].steps.join(' ')}`).join(' ');tts(txt);return}
+  }
+}
+document.addEventListener('click',e=>{const el=e.target.closest('[data-act]');if(el&&!el.disabled)act(el,e)});
+document.addEventListener('change',e=>{
+  if(e.target.id==='pick')setLetter(+e.target.value);
+  else if(e.target.id==='cfgNames'){S.names=e.target.checked;save();render();if($('#dStep').open)renderStep()}
+  else if(e.target.id==='cfgTheme'){S.theme=e.target.value;save();applyTheme()}
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')stopAudio()});
+for(const id of ['#dStep','#dSyl','#dGuion','#dCfg'])$(id).addEventListener('close',()=>{stopAudio();if(opener&&document.contains(opener))opener.focus();if(id==='#dStep')curStep=null;render()});
+$('#dStep').addEventListener('click',e=>{if(e.target===$('#dStep'))$('#dStep').close()});
+$('#dSyl').addEventListener('click',e=>{if(e.target===$('#dSyl'))$('#dSyl').close()});
+applyTheme();render();
+</script>
